@@ -45,6 +45,7 @@ struct GroceryEditView: View {
             }
             
             selectedGroceryItem?.itemName = itemName
+            self.presentationMode.wrappedValue.dismiss()
             do {
                 try viewContext.save()
             } catch {

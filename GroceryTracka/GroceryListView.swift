@@ -31,23 +31,30 @@ struct GroceryListView: View {
                     
                     List {
                         ForEach(items) { item in
-                            NavigationLink(destination: GroceryEditView(passedGroceryItem: nil))
+                            NavigationLink(destination: RecipeListView(ingredient: item.itemName ?? "Chicken"))
                             {
                                 Text(item.itemName ?? "default value")
                                 
                             }
                         }
                         .onDelete(perform: deleteItem)
-                        .toolbar {
-                            ToolbarItem(placement: .navigationBarTrailing) {
-                                EditButton()
-                            }
-                            
-                        }
+                        
                         FloatingButton()
                     }
                 }
-                .navigationTitle("Grocery List")
+                .toolbar {
+                    ToolbarItem(placement: .principal){
+                        Text("Grocery List")
+                            .font(.largeTitle)
+                           
+                    }
+                    
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        EditButton()
+                    }
+                }
+      
+                
                 
                 if showAddItemOverlay {
                     Color.black.opacity(0.4)
@@ -106,6 +113,7 @@ struct GroceryListView: View {
         offsetss.map {items[$0]}.forEach(viewContext.delete)
         
         saveContext(viewContext)
+        
     }
     
     func saveContext(_ context: NSManagedObjectContext ) {
