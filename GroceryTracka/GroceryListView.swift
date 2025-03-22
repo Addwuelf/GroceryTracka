@@ -6,36 +6,45 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct GroceryListView: View {
+    
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    @FetchRequest(
+        entity: GroceryItem.entity(),
+        sortDescriptors: [NSSortDescriptor(keyPath: \GroceryItem.itemName, ascending: true)],
+        animation: .default)
+    private var items: FetchedResults<GroceryItem>
+    
+    
     
     // Grocery Items Placeholder
     @State var groceryItems = ["Chicken", "Milk", "Banana"]
     @State var showAddItemOverlay = false
     @State var newItemName = ""
-    
     var body: some View {
         NavigationStack {
             ZStack{
                 VStack {
                     
                     List {
-                        ForEach(groceryItems, id: \.self) { item in
-                            Text(item)
-                        }
-                        .onDelete(perform: deleteItem)
-                    }
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            EditButton()
-                        }
-                        ToolbarItem {
-                            
-                            // Lets user add item
-                            Button(action: addItem) {
-                                Label("Add Item", systemImage: "plus")
+                        ForEach(items) { item in
+                            NavigationLink(destination: GroceryEditView(passedGroceryItem: nil))
+                            {
+                                Text(item.itemName ?? "default value")
+                                
                             }
                         }
+                        .onDelete(perform: deleteItem)
+                        .toolbar {
+                            ToolbarItem(placement: .navigationBarTrailing) {
+                                EditButton()
+                            }
+                            
+                        }
+                        FloatingButton()
                     }
                 }
                 .navigationTitle("Grocery List")
@@ -85,19 +94,34 @@ struct GroceryListView: View {
                     
                 }
             }
+            
         }
+        
+        
+        
+        
     }
     
     func deleteItem(at offsetss: IndexSet) {
-        groceryItems.remove(atOffsets: offsetss)
+        offsetss.map {items[$0]}.forEach(viewContext.delete)
+        
+        saveContext(viewContext)
     }
     
-    func addItem() {
-        showAddItemOverlay = true
+    func saveContext(_ context: NSManagedObjectContext ) {
+        do {
+            try context.save()
+        } catch {
+            let nsError = error as NSError
+            fatalError("Unresolved error \(nsError) \(nsError.userInfo)")
+        }
     }
     
 }
-
-#Preview {
-    GroceryListView()
+struct GroceryListView_Previews: PreviewProvider {
+    static var previews: some View {
+        GroceryListView()
+    }
 }
+        
+    

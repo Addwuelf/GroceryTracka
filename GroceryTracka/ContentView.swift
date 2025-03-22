@@ -12,33 +12,20 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \GroceryItem.itemName, ascending: true)],
         animation: .default)
-    private var items: FetchedResults<Item>
+    private var items: FetchedResults<GroceryItem>
 
     var body: some View {
         NavigationView {
-            List {
-                
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-            Text("Select an item")
+            GroceryListView()
         }
     }
 
     private func addItem() {
         withAnimation {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
+            let newItem = GroceryItem(context: viewContext)
+            newItem.itemName = "New grocery"
 
             do {
                 try viewContext.save()
@@ -75,5 +62,5 @@ private let itemFormatter: DateFormatter = {
 }()
 
 #Preview {
-    ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+    ContentView().environment(\.managedObjectContext, Persistence.preview.container.viewContext)
 }
