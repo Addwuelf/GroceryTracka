@@ -6,6 +6,10 @@
 //
 
 import SwiftUI
+import CoreData
+
+
+
 
 @main
 struct GroceryTrackaApp: App {
