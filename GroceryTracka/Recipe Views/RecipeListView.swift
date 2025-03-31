@@ -27,7 +27,7 @@ struct RecipeListView: View {
                 }
             }
         }
-        .navigationTitle("(ingredient.capitalized) Recipes")
+        .navigationTitle("\(ingredient.capitalized) Recipes")
         .onAppear { // Fetch recipes when the view appears
             fetchRecipes(for: ingredient)
         }
@@ -67,5 +67,5 @@ struct RecipeResponse: Codable {
 }
 
 #Preview {
-    RecipeListView(ingredient: "Chicken") 
+    RecipeListView(ingredient: "Chicken")
 }

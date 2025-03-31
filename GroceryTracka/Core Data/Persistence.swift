@@ -36,7 +36,7 @@ struct Persistence {
         }
         container.loadPersistentStores { (storeDescription, error) in
             if let error = error as NSError? {
-                fatalError("Unresolved error (error), (error.userInfo)")
+                fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         }
         container.viewContext.automaticallyMergesChangesFromParent = true
