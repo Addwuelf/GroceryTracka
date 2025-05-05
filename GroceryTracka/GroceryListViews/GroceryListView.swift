@@ -8,6 +8,7 @@
 import SwiftUI
 import CoreData
 
+// Displays all of the users groceryItems. Also lets user manage items.
 struct GroceryListView: View {
     
     @Environment(\.managedObjectContext) private var viewContext
@@ -38,8 +39,6 @@ struct GroceryListView: View {
                             }
                         }
                         .onDelete(perform: deleteItem)
-                        
-                        FloatingButton()
                     }
                 }
                 .toolbar {
@@ -48,58 +47,19 @@ struct GroceryListView: View {
                             .font(.largeTitle)
                            
                     }
-                    
+                    // Allows user to delete items
                     ToolbarItem(placement: .navigationBarTrailing) {
                         EditButton()
                     }
-                }
-       //
-                
-                
-                if showAddItemOverlay {
-                    Color.black.opacity(0.4)
-                        .edgesIgnoringSafeArea(.all)
-                        .onTapGesture {
-                            showAddItemOverlay = false
-                        }
-                    
-                    VStack(spacing: 20) {
-                        Text("Add New Item")
-                            .font(.headline)
-                        
-                        TextField("Enter Item Name", text: $newItemName)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .padding()
-                        
-                        HStack {
-                            Button("Cancel") {
-                                showAddItemOverlay = false
-                            }
-                            .padding()
-                            .background(Color.red)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                            
-                            Button("Add"){
-                                if !newItemName.isEmpty {
-                                    groceryItems.append(newItemName)
-                                    newItemName = ""
-                                    showAddItemOverlay = false
-                                }
-                            }
-                            .padding()
-                            .background(Color.green)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
+                    // When clicked displays GroceryEditView where they can add new item
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        NavigationLink(destination: GroceryEditView(passedGroceryItem: nil)){
+                            Text(" + ")
+                                .font(.headline)
                         }
                     }
-                    .padding()
-                    .frame(width: 300, height: 200)
-                    .background(Color.white)
-                    .cornerRadius(12)
-                    .shadow(radius: 10)
-                    
                 }
+       //
             }
             
         }
