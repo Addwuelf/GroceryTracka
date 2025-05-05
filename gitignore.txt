@@ -96,7 +96,7 @@ iOSInjectionProject/
 ### Xcode ###
 
 ## Xcode 8 and earlier
-
+Breakpoints_v2.xcbkptlist
 ### Xcode Patch ###
 *.xcodeproj/*
 !*.xcodeproj/project.pbxproj
