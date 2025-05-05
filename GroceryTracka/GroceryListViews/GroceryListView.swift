@@ -26,47 +26,41 @@ struct GroceryListView: View {
     @State var showAddItemOverlay = false
     @State var newItemName = ""
     var body: some View {
-        NavigationStack {
-            ZStack{
-                VStack {
+        VStack(spacing: 0) {
+            Text("Grocery List").font(.largeTitle)
+            NavigationStack() {
+                ZStack{
+                    VStack {
+                        List {
+                            ForEach(items) { item in
+                                NavigationLink(destination: RecipeListView(ingredient: item.itemName ?? "Chicken"))
+                                {
+                                    Text(item.itemName ?? "default value")
+                                    
+                                }
+                            }
+                            .onDelete(perform: deleteItem)
+                        }
+                    }
                     
-                    List {
-                        ForEach(items) { item in
-                            NavigationLink(destination: RecipeListView(ingredient: item.itemName ?? "Chicken"))
-                            {
-                                Text(item.itemName ?? "default value")
-                                
+                    .toolbar() {
+                        // Allows user to delete items
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            EditButton()
+                        }
+                        // When clicked displays GroceryEditView where they can add new item
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            NavigationLink(destination: GroceryEditView(passedGroceryItem: nil)){
+                                Text(" + ")
+                                    .font(.headline)
                             }
                         }
-                        .onDelete(perform: deleteItem)
                     }
+                    //
                 }
-                .toolbar {
-                    ToolbarItem(placement: .principal){
-                        Text("Grocery List")
-                            .font(.largeTitle)
-                           
-                    }
-                    // Allows user to delete items
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        EditButton()
-                    }
-                    // When clicked displays GroceryEditView where they can add new item
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        NavigationLink(destination: GroceryEditView(passedGroceryItem: nil)){
-                            Text(" + ")
-                                .font(.headline)
-                        }
-                    }
-                }
-       //
+                
             }
-            
         }
-        
-        
-        
-        
     }
     
     func deleteItem(at offsetss: IndexSet) {
