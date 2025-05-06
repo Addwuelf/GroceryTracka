@@ -13,22 +13,47 @@ struct GroceryEditView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @State var selectedGroceryItem: GroceryItem?
     @State var itemName: String
+    @State var itemAmount: Double
+    @State private var amount = ""
+    @State private var itemCategory = ""
+
+
     
     init(passedGroceryItem: GroceryItem?) {
         
         if let groceryItem = passedGroceryItem {
             _selectedGroceryItem = State(initialValue: groceryItem)
             _itemName = State(initialValue: groceryItem.itemName ?? "")
+            _itemAmount = State(initialValue: groceryItem.amount )
+            _itemCategory = State(initialValue: groceryItem.category ?? "")
         }
         else {
             _itemName = State(initialValue: "")
+            _itemAmount = State(initialValue: 1)
+            _itemCategory = State(initialValue: "")
         }
     }
     var body: some View {
         Form {
-            Section(header: Text("Item")) {
-                TextField("Item Name", text: $itemName )
+            Section(header: Text("Item Name")) {
+                TextField("", text: $itemName )
             }
+            Section(header: Text("Item Amoun")) {
+                TextField("Amount", text: $amount)
+                    .keyboardType(.numberPad)
+                // Only allows number input
+                    .onChange(of: amount) { oldValue, newValue in
+                        amount = newValue.filter { "0123456789".contains($0)
+                        }
+                    }
+
+                TextField("Category", text: $itemCategory)
+                Picker(selection: /*@START_MENU_TOKEN@*/.constant(1)/*@END_MENU_TOKEN@*/, label: Text("Measurment")) {
+                    /*@START_MENU_TOKEN@*/Text("1").tag(1)/*@END_MENU_TOKEN@*/
+                    /*@START_MENU_TOKEN@*/Text("2").tag(2)/*@END_MENU_TOKEN@*/
+                }
+            }
+
             Section()
             {
                 Button("Add", action: addAction)
@@ -43,7 +68,8 @@ struct GroceryEditView: View {
             if selectedGroceryItem == nil {
                 selectedGroceryItem = GroceryItem(context: viewContext)
             }
-            
+            itemAmount = (amount as NSString).doubleValue
+            selectedGroceryItem?.amount = itemAmount
             selectedGroceryItem?.itemName = itemName
             self.presentationMode.wrappedValue.dismiss()
             do {
@@ -59,6 +85,11 @@ struct GroceryEditView: View {
 
 struct GroceryEditView_Previews: PreviewProvider {
     static var previews: some View {
-        GroceryEditView(passedGroceryItem: GroceryItem())
+        
+        let context = Persistence.preview.container.viewContext
+        let sampleItem = GroceryItem(context: context)
+
+        return GroceryEditView(passedGroceryItem: sampleItem)
+            .environment(\.managedObjectContext, context)
     }
 }
