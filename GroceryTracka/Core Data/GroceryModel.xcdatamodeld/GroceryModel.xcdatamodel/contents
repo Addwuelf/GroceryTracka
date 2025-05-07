@@ -4,5 +4,6 @@
         <attribute name="amount" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="category" optional="YES" attributeType="String"/>
         <attribute name="itemName" attributeType="String"/>
+        <attribute name="measurment" optional="YES" attributeType="String"/>
     </entity>
 </model>

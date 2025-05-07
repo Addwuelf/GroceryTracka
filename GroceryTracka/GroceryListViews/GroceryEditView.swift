@@ -1,10 +1,3 @@
-//
-//  GroceryEditView.swift
-//  GroceryTracka
-//
-//  Created by Adam Wuelfing on 3/22/25.
-//
-
 import SwiftUI
 
 struct GroceryEditView: View {
@@ -16,6 +9,7 @@ struct GroceryEditView: View {
     @State var itemAmount: Double
     @State private var amount = ""
     @State private var itemCategory = ""
+    @State private var itemMeasurment: MeasurementOptions = .none
 
 
     
@@ -26,33 +20,43 @@ struct GroceryEditView: View {
             _itemName = State(initialValue: groceryItem.itemName ?? "")
             _itemAmount = State(initialValue: groceryItem.amount )
             _itemCategory = State(initialValue: groceryItem.category ?? "")
+            _itemMeasurment = State(initialValue: MeasurementOptions(rawValue: groceryItem.measurment ?? "") ?? .none)
         }
         else {
             _itemName = State(initialValue: "")
             _itemAmount = State(initialValue: 1)
             _itemCategory = State(initialValue: "")
+            _itemMeasurment = State(initialValue: MeasurementOptions(rawValue: "") ??  .none)
         }
     }
     var body: some View {
         Form {
             Section(header: Text("Item Name")) {
-                TextField("", text: $itemName )
+                TextField("", text: $itemName ) {
+                    
+                }
             }
-            Section(header: Text("Item Amoun")) {
-                TextField("Amount", text: $amount)
+            HStack {
+                Text("Category:")
+                TextField("", text: $itemCategory)
+            }
+            HStack {
+                Text("Amount:")
+                TextField("", text: $amount)
                     .keyboardType(.numberPad)
                 // Only allows number input
                     .onChange(of: amount) { oldValue, newValue in
                         amount = newValue.filter { "0123456789".contains($0)
                         }
                     }
-
-                TextField("Category", text: $itemCategory)
-                Picker(selection: /*@START_MENU_TOKEN@*/.constant(1)/*@END_MENU_TOKEN@*/, label: Text("Measurment")) {
-                    /*@START_MENU_TOKEN@*/Text("1").tag(1)/*@END_MENU_TOKEN@*/
-                    /*@START_MENU_TOKEN@*/Text("2").tag(2)/*@END_MENU_TOKEN@*/
-                }
             }
+                Picker("Measurment:", selection: $itemMeasurment) {
+                    ForEach(MeasurementOptions.allCases, id: \.self) {option in
+                        Text(option.rawValue)
+                    }
+
+                }
+        
 
             Section()
             {
@@ -71,6 +75,8 @@ struct GroceryEditView: View {
             itemAmount = (amount as NSString).doubleValue
             selectedGroceryItem?.amount = itemAmount
             selectedGroceryItem?.itemName = itemName
+            selectedGroceryItem?.category = itemCategory
+            selectedGroceryItem?.measurment = itemMeasurment.rawValue
             self.presentationMode.wrappedValue.dismiss()
             do {
                 try viewContext.save()

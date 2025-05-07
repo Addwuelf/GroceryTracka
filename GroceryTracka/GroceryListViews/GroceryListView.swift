@@ -19,7 +19,10 @@ struct GroceryListView: View {
         animation: .default)
     private var items: FetchedResults<GroceryItem>
     
-    
+    @State private var selectedItem: GroceryItem?
+    @State private var selectedRecipe: String?
+    @State private var isEditing = false
+    @State private var isViewingRecipe = false
     
     // Grocery Items Placeholder
     @State var groceryItems = ["Chicken", "Milk", "Banana"]
@@ -33,13 +36,41 @@ struct GroceryListView: View {
                     VStack {
                         List {
                             ForEach(items) { item in
-                                NavigationLink(destination: RecipeListView(ingredient: item.itemName ?? "Chicken"))
-                                {
+                                HStack {
+                                    // Edit View Triggered by Clicking the Text
                                     Text(item.itemName ?? "default value")
-                                    
+                                        .font(.headline)
+                                        .padding()
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .onTapGesture {
+                                            selectedItem = item
+                                            isEditing = true
+                                        }
+
+                                    Spacer()
+
+                                    // Recipe View Triggered by Clicking the Info Icon
+                                    Button(action: {
+                                        selectedRecipe = item.itemName ?? "Chicken"
+                                        isViewingRecipe = true
+                                    }) {
+                                        Image(systemName: "info.circle")
+                                            .foregroundColor(.blue)
+                                            .padding()
+                                    }
                                 }
                             }
                             .onDelete(perform: deleteItem)
+                            .sheet(isPresented: $isEditing) {
+                                if let item = selectedItem {
+                                    GroceryEditView(passedGroceryItem: item)
+                                }
+                            }
+                            .sheet(isPresented: $isViewingRecipe) {
+                                if let ingredient = selectedRecipe {
+                                    RecipeListView(ingredient: ingredient)
+                                }
+                            }
                         }
                     }
                     
