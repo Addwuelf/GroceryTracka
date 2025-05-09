@@ -1,16 +1,30 @@
-//
-//  GroceryListView.swift
-//  GroceryTracka
-//
-//  Created by Adam Wuelfing on 3/19/25.
-//
+
 
 import SwiftUI
 import CoreData
 
+
+struct Contetview: View {
+    @State var logged = false
+    @State private var selectedItem: GroceryItem?
+    @State var itemName = ""
+    
+    var body: some View {
+        if logged {
+            RecipeListView(ingredient: itemName)
+        }
+        else {
+            GroceryListView(itemName: $itemName, logged: $logged, selectedItem: $selectedItem)
+        }
+    }
+}
+
 // Displays all of the users groceryItems. Also lets user manage items.
 struct GroceryListView: View {
     
+    @Binding var itemName: String
+    @Binding var logged : Bool
+    @Binding var selectedItem: GroceryItem?
     @Environment(\.managedObjectContext) private var viewContext
     
     @FetchRequest(
@@ -19,7 +33,6 @@ struct GroceryListView: View {
         animation: .default)
     private var items: FetchedResults<GroceryItem>
     
-    @State private var selectedItem: GroceryItem?
     @State private var selectedRecipe: String?
     @State private var isEditing = false
     @State private var isViewingRecipe = false
@@ -36,41 +49,29 @@ struct GroceryListView: View {
                     VStack {
                         List {
                             ForEach(items) { item in
+                                
                                 HStack {
-                                    // Edit View Triggered by Clicking the Text
-                                    Text(item.itemName ?? "default value")
-                                        .font(.headline)
-                                        .padding()
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .onTapGesture {
-                                            selectedItem = item
-                                            isEditing = true
-                                        }
-
-                                    Spacer()
-
-                                    // Recipe View Triggered by Clicking the Info Icon
-                                    Button(action: {
-                                        selectedRecipe = item.itemName ?? "Chicken"
-                                        isViewingRecipe = true
-                                    }) {
-                                        Image(systemName: "info.circle")
-                                            .foregroundColor(.blue)
-                                            .padding()
+                                // Edit View Triggered by Clicking the Text
+                                    NavigationLink(destination: GroceryEditView(passedGroceryItem: item)) {
+                                        Text(item.itemName ?? "default value")
+                                            .contentShape(Rectangle())
                                     }
+
+                                        // Recipe View Triggered by Clicking the Info Icon
+                                        Button(action: {
+                                            itemName = item.itemName ?? "Chicken"
+                                            
+                                            logged = true
+                                        }) {
+                                            Image(systemName: "info.circle")
+                                                .foregroundColor(.blue)
+                                                .padding()
+                                        }
+                                        .buttonStyle(BorderedButtonStyle())
                                 }
                             }
                             .onDelete(perform: deleteItem)
-                            .sheet(isPresented: $isEditing) {
-                                if let item = selectedItem {
-                                    GroceryEditView(passedGroceryItem: item)
-                                }
-                            }
-                            .sheet(isPresented: $isViewingRecipe) {
-                                if let ingredient = selectedRecipe {
-                                    RecipeListView(ingredient: ingredient)
-                                }
-                            }
+                           
                         }
                     }
                     
@@ -87,7 +88,7 @@ struct GroceryListView: View {
                             }
                         }
                     }
-                    //
+                    
                 }
                 
             }
@@ -111,9 +112,16 @@ struct GroceryListView: View {
     }
     
 }
+
+
+
+
+
+
+
 struct GroceryListView_Previews: PreviewProvider {
     static var previews: some View {
-        GroceryListView()
+      
     }
 }
         
