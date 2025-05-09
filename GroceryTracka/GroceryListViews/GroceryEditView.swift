@@ -6,7 +6,6 @@ struct GroceryEditView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @State var selectedGroceryItem: GroceryItem?
     @State var itemName: String
-    @State var itemAmount: Double
     @State private var amount = ""
     @State private var itemCategory = ""
     @State private var itemMeasurment: MeasurementOptions = .none
@@ -18,13 +17,13 @@ struct GroceryEditView: View {
         if let groceryItem = passedGroceryItem {
             _selectedGroceryItem = State(initialValue: groceryItem)
             _itemName = State(initialValue: groceryItem.itemName ?? "")
-            _itemAmount = State(initialValue: groceryItem.amount )
+            _amount = State(initialValue: groceryItem.iamount ?? "")
             _itemCategory = State(initialValue: groceryItem.category ?? "")
             _itemMeasurment = State(initialValue: MeasurementOptions(rawValue: groceryItem.measurment ?? "") ?? .none)
         }
         else {
             _itemName = State(initialValue: "")
-            _itemAmount = State(initialValue: 1)
+            _amount = State(initialValue: "")
             _itemCategory = State(initialValue: "")
             _itemMeasurment = State(initialValue: MeasurementOptions(rawValue: "") ??  .none)
         }
@@ -72,8 +71,7 @@ struct GroceryEditView: View {
             if selectedGroceryItem == nil {
                 selectedGroceryItem = GroceryItem(context: viewContext)
             }
-            itemAmount = (amount as NSString).doubleValue
-            selectedGroceryItem?.amount = itemAmount
+            selectedGroceryItem?.iamount = amount
             selectedGroceryItem?.itemName = itemName
             selectedGroceryItem?.category = itemCategory
             selectedGroceryItem?.measurment = itemMeasurment.rawValue
