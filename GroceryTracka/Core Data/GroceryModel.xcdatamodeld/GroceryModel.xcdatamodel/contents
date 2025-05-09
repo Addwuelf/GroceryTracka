@@ -5,6 +5,10 @@
         <attribute name="iamount" optional="YES" attributeType="String"/>
         <attribute name="itemName" attributeType="String"/>
         <attribute name="measurment" optional="YES" attributeType="String"/>
+        <relationship name="grocerylist" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GroceryList" inverseName="items" inverseEntity="GroceryList"/>
     </entity>
-    <entity name="GroceryList" representedClassName="GroceryList" syncable="YES" codeGenerationType="class"/>
+    <entity name="GroceryList" representedClassName="GroceryList" syncable="YES" codeGenerationType="class">
+        <attribute name="listname" optional="YES" attributeType="String"/>
+        <relationship name="items" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GroceryItem" inverseName="grocerylist" inverseEntity="GroceryItem"/>
+    </entity>
 </model>
