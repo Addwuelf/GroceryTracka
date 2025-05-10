@@ -59,13 +59,21 @@ struct HomeListsView: View {
                                         
                                         VStack {
                                             TextField("", text: $newListName)
+                                                .onChange(of: newListName) {
+                                                    showingEditAlert.toggle()
+                                                    showingEditAlert.toggle()
+                                                }
                                         }
                                         Button("Ok", role: .cancel) {
                                             listName = newListName
                                             showingAlert = false
+                                            let trimmedName = newListName.trimmingCharacters(in: .whitespacesAndNewlines)
+                                            if(trimmedName.description.isEmpty) {
+                                                newListName = "List"
+                                                listName = newListName
+                                        }
                                             addAction()
                                         }
-                                        
                                     }
                                 }
                             }
@@ -95,6 +103,11 @@ struct HomeListsView: View {
                                     listName = newListName
                                     showingAlert = false
                                     selectedGroceryList = nil
+                                    let trimmedName = newListName.trimmingCharacters(in: .whitespacesAndNewlines)
+                                    if(trimmedName.description.isEmpty) {
+                                        newListName = "List"
+                                        listName = newListName
+                                }
                                     addAction()
                                 }
                                 
