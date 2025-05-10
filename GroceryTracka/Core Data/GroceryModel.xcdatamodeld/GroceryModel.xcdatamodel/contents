@@ -9,6 +9,6 @@
     </entity>
     <entity name="GroceryList" representedClassName="GroceryList" syncable="YES" codeGenerationType="class">
         <attribute name="listname" optional="YES" attributeType="String"/>
-        <relationship name="items" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GroceryItem" inverseName="grocerylist" inverseEntity="GroceryItem"/>
+        <relationship name="items" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="GroceryItem" inverseName="grocerylist" inverseEntity="GroceryItem"/>
     </entity>
 </model>

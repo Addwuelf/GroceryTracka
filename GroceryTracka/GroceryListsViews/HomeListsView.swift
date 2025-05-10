@@ -42,7 +42,6 @@ struct HomeListsView: View {
                                         Text(list.listname ?? "default value")
                                             .contentShape(Rectangle())
                                     }
-                                    
                                     // Recipe View Triggered by Clicking the Info Icon
                                     Button(action: {
                                         showingEditAlert = true

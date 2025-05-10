@@ -7,6 +7,7 @@ import CoreData
 struct Contetview: View {
     @State var logged = false
     @State private var selectedItem: GroceryItem?
+    @State private var selectedList: GroceryList?
     @State var itemName = ""
     
     var body: some View {
@@ -14,7 +15,7 @@ struct Contetview: View {
             RecipeListView(ingredient: itemName)
         }
         else {
-            GroceryListView(itemName: $itemName, logged: $logged, selectedItem: $selectedItem)
+            GroceryListView(itemName: $itemName, logged: $logged, selectedItem: $selectedItem, selectedList: $selectedList)
         }
     }
 }
@@ -25,13 +26,14 @@ struct GroceryListView: View {
     @Binding var itemName: String
     @Binding var logged : Bool
     @Binding var selectedItem: GroceryItem?
+    @Binding var selectedList: GroceryList?
     @Environment(\.managedObjectContext) private var viewContext
     
     @FetchRequest(
         entity: GroceryItem.entity(),
         sortDescriptors: [NSSortDescriptor(keyPath: \GroceryItem.itemName, ascending: true)],
         animation: .default)
-    private var items: FetchedResults<GroceryItem>
+    private var itemss: FetchedResults<GroceryItem>
     
     @State private var selectedRecipe: String?
     @State private var isEditing = false
@@ -41,6 +43,15 @@ struct GroceryListView: View {
     @State var groceryItems = ["Chicken", "Milk", "Banana"]
     @State var showAddItemOverlay = false
     @State var newItemName = ""
+    
+    private var items: [GroceryItem] {
+        guard let itemSet = selectedList?.items as? Set<GroceryItem> else {
+            return []
+        }
+        return itemSet.sorted { $0.itemName ?? "" < $1.itemName ?? "" }
+    }
+    
+    
     var body: some View {
         VStack(spacing: 0) {
             Text("Grocery List").font(.largeTitle)
