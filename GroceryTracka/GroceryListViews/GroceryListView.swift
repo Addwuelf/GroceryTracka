@@ -63,7 +63,7 @@ struct GroceryListView: View {
                                 
                                 HStack {
                                 // Edit View Triggered by Clicking the Text
-                                    NavigationLink(destination: GroceryEditView(passedGroceryItem: item)) {
+                                    NavigationLink(destination: GroceryEditView(passedGroceryItem: item, passedList: $selectedList)) {
                                         Text(item.itemName ?? "default value")
                                             .contentShape(Rectangle())
                                     }
@@ -93,7 +93,7 @@ struct GroceryListView: View {
                         }
                         // When clicked displays GroceryEditView where they can add new item
                         ToolbarItem(placement: .navigationBarTrailing) {
-                            NavigationLink(destination: GroceryEditView(passedGroceryItem: nil)){
+                            NavigationLink(destination: GroceryEditView(passedGroceryItem: nil, passedList: $selectedList)){
                                 Text(" + ")
                                     .font(.headline)
                             }

@@ -10,9 +10,9 @@ struct GroceryEditView: View {
     @State private var itemCategory = ""
     @State private var itemMeasurment: MeasurementOptions = .none
 
-
+    @Binding var selectedList : GroceryList?
     
-    init(passedGroceryItem: GroceryItem?) {
+    init(passedGroceryItem: GroceryItem?, passedList: Binding<GroceryList?>) {
         
         if let groceryItem = passedGroceryItem {
             _selectedGroceryItem = State(initialValue: groceryItem)
@@ -27,6 +27,7 @@ struct GroceryEditView: View {
             _itemCategory = State(initialValue: "")
             _itemMeasurment = State(initialValue: MeasurementOptions(rawValue: "") ??  .none)
         }
+        self._selectedList = passedList
     }
     var body: some View {
         Form {
@@ -75,6 +76,11 @@ struct GroceryEditView: View {
             selectedGroceryItem?.itemName = itemName
             selectedGroceryItem?.category = itemCategory
             selectedGroceryItem?.measurment = itemMeasurment.rawValue
+            
+            if let groceryList = selectedList {
+                groceryList.addToItems(selectedGroceryItem!)
+            }
+            
             self.presentationMode.wrappedValue.dismiss()
             do {
                 try viewContext.save()
@@ -93,7 +99,7 @@ struct GroceryEditView_Previews: PreviewProvider {
         let context = Persistence.preview.container.viewContext
         let sampleItem = GroceryItem(context: context)
 
-        return GroceryEditView(passedGroceryItem: sampleItem)
-            .environment(\.managedObjectContext, context)
+   //     return GroceryEditView(passedGroceryItem: sampleItem)
+          //  .environment(\.managedObjectContext, context)
     }
 }
