@@ -2,6 +2,7 @@ import SwiftUI
 
 struct GroceryEditView: View {
     
+    @Binding private var selectedList : GroceryList?
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @Environment(\.managedObjectContext) private var viewContext
     @State var selectedGroceryItem: GroceryItem?
@@ -11,8 +12,7 @@ struct GroceryEditView: View {
     @State private var itemMeasurment: MeasurementOptions = .none
 
 
-    
-    init(passedGroceryItem: GroceryItem?) {
+    init(passedGroceryItem: GroceryItem?, selectedList: Binding<GroceryList?>) {
         
         if let groceryItem = passedGroceryItem {
             _selectedGroceryItem = State(initialValue: groceryItem)
@@ -20,6 +20,7 @@ struct GroceryEditView: View {
             _amount = State(initialValue: groceryItem.iamount ?? "")
             _itemCategory = State(initialValue: groceryItem.category ?? "")
             _itemMeasurment = State(initialValue: MeasurementOptions(rawValue: groceryItem.measurment ?? "") ?? .none)
+            
         }
         else {
             _itemName = State(initialValue: "")
@@ -27,6 +28,7 @@ struct GroceryEditView: View {
             _itemCategory = State(initialValue: "")
             _itemMeasurment = State(initialValue: MeasurementOptions(rawValue: "") ??  .none)
         }
+        self._selectedList = selectedList
     }
     var body: some View {
         Form {
@@ -75,6 +77,12 @@ struct GroceryEditView: View {
             selectedGroceryItem?.itemName = itemName
             selectedGroceryItem?.category = itemCategory
             selectedGroceryItem?.measurment = itemMeasurment.rawValue
+            
+            
+            if let groceryList = selectedList {
+                groceryList.addToItems(selectedGroceryItem!)
+            }
+            
             self.presentationMode.wrappedValue.dismiss()
             do {
                 try viewContext.save()
@@ -89,11 +97,6 @@ struct GroceryEditView: View {
 
 struct GroceryEditView_Previews: PreviewProvider {
     static var previews: some View {
-        
-        let context = Persistence.preview.container.viewContext
-        let sampleItem = GroceryItem(context: context)
-
-        return GroceryEditView(passedGroceryItem: sampleItem)
-            .environment(\.managedObjectContext, context)
+   
     }
 }
