@@ -9,11 +9,14 @@ struct GroceryEditView: View {
     @State private var amount = ""
     @State private var itemCategory = ""
     @State private var itemMeasurment: MeasurementOptions = .none
+    @ObservedObject var viewModel: GroceryListViewModel
+    private var selectedList: GroceryList? {
+        viewModel.selectedGroceryList
+    }
 
-    @Binding var selectedList : GroceryList?
     
-    init(passedGroceryItem: GroceryItem?, passedList: Binding<GroceryList?>) {
-        
+    init(passedGroceryItem: GroceryItem?, viewModel: GroceryListViewModel) {
+        self.viewModel = viewModel
         if let groceryItem = passedGroceryItem {
             _selectedGroceryItem = State(initialValue: groceryItem)
             _itemName = State(initialValue: groceryItem.itemName ?? "")
@@ -27,7 +30,7 @@ struct GroceryEditView: View {
             _itemCategory = State(initialValue: "")
             _itemMeasurment = State(initialValue: MeasurementOptions(rawValue: "") ??  .none)
         }
-        self._selectedList = passedList
+       
     }
     var body: some View {
         Form {
@@ -69,24 +72,34 @@ struct GroceryEditView: View {
     
     func addAction() {
         withAnimation {
+
+            // If there's no grocery item selected a new one is created
             if selectedGroceryItem == nil {
                 selectedGroceryItem = GroceryItem(context: viewContext)
             }
+
+            // Updates the properties of the grocery item using the values from UI
             selectedGroceryItem?.iamount = amount
             selectedGroceryItem?.itemName = itemName
             selectedGroceryItem?.category = itemCategory
             selectedGroceryItem?.measurment = itemMeasurment.rawValue
-            
+
+            // If a grocery list is currently selected, adds this grocery item
+            // to its collection of items
             if let groceryList = selectedList {
                 groceryList.addToItems(selectedGroceryItem!)
             }
-            
+
+            // Dismiss the current view
             self.presentationMode.wrappedValue.dismiss()
+
+            // Try to save the changes to the persistent store
+            //If saving fails log the error and stop execution; this helps catch issues during development
             do {
                 try viewContext.save()
             } catch {
                 let nsError = error as NSError
-                fatalError("Unresolved error \(nsError) \(nsError.userInfo)")
+                fatalError("Unresolved error (nsError) (nsError.userInfo)")
             }
         }
     }

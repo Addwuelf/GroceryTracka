@@ -1,14 +1,15 @@
-//
-//  HomeListsView.swift
-//  GroceryTracka
-//
-//  Created by Adam Wuelfing on 5/8/25.
-//
 
 import SwiftUI
 import CoreData
 
+// handles passing of selectedGroceryList
+class GroceryListViewModel: ObservableObject {
+    @Published var selectedGroceryList: GroceryList?
+}
+
 struct HomeListsView: View {
+    
+    @StateObject private var viewModel = GroceryListViewModel()
     
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
@@ -19,8 +20,6 @@ struct HomeListsView: View {
         animation: .default)
     private var lists: FetchedResults<GroceryList>
     
-    
-    @State var selectedGroceryList: GroceryList?
     @State private var listName = ""
     @State private var newListName = ""
     @State private var showingAlert = false
@@ -37,12 +36,22 @@ struct HomeListsView: View {
                             ForEach(lists) { list in
                                 
                                 HStack {
+                                   
                                     // Contentviews View Triggered by Clicking the Text
-                                    NavigationLink(destination: Contetview()) {
+                                    NavigationLink(
+                                        destination: Contetview(viewModel: viewModel)
+                                            .onAppear {
+                                                viewModel.selectedGroceryList = list
+                                            }
+                                    ) {
                                         Text(list.listname ?? "default value")
                                             .contentShape(Rectangle())
                                     }
-                                    // Recipe View Triggered by Clicking the Info Icon
+                                    
+                       
+                                    
+                                    
+                                 // Displays alert
                                     Button(action: {
                                         showingEditAlert = true
                                         newListName = list.listname ?? "New List"
@@ -101,7 +110,7 @@ struct HomeListsView: View {
                                 Button("Ok", role: .cancel) {
                                     listName = newListName
                                     showingAlert = false
-                                    selectedGroceryList = nil
+                                    viewModel.selectedGroceryList = nil
                                     let trimmedName = newListName.trimmingCharacters(in: .whitespacesAndNewlines)
                                     if(trimmedName.description.isEmpty) {
                                         newListName = "List"
@@ -131,13 +140,13 @@ struct HomeListsView: View {
     
     func addAction() {
         withAnimation {
-            if let list = selectedGroceryList {
+            if let list = viewModel.selectedGroceryList {
                     // If there's an existing list, updates its name instead of creating a new one
                     list.listname = newListName
                 } else {
                     // If no list is selected, creates a new one
-                    selectedGroceryList = GroceryList(context: viewContext)
-                    selectedGroceryList?.listname = newListName
+                    viewModel.selectedGroceryList = GroceryList(context: viewContext)
+                    viewModel.selectedGroceryList?.listname = newListName
                 }
             newListName = ""
             do {

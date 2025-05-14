@@ -3,11 +3,10 @@
 import SwiftUI
 import CoreData
 
-
 struct Contetview: View {
+    @ObservedObject var viewModel: GroceryListViewModel
     @State var logged = false
     @State private var selectedItem: GroceryItem?
-    @State private var selectedList: GroceryList?
     @State var itemName = ""
     
     var body: some View {
@@ -15,7 +14,7 @@ struct Contetview: View {
             RecipeListView(ingredient: itemName)
         }
         else {
-            GroceryListView(itemName: $itemName, logged: $logged, selectedItem: $selectedItem, selectedList: $selectedList)
+            GroceryListView(viewModel: viewModel,itemName: $itemName, logged: $logged, selectedItem: $selectedItem)
         }
     }
 }
@@ -23,10 +22,14 @@ struct Contetview: View {
 // Displays all of the users groceryItems. Also lets user manage items.
 struct GroceryListView: View {
     
+    @ObservedObject var viewModel: GroceryListViewModel
     @Binding var itemName: String
     @Binding var logged : Bool
     @Binding var selectedItem: GroceryItem?
-    @Binding var selectedList: GroceryList?
+    private var selectedList: GroceryList? {
+        viewModel.selectedGroceryList
+    }
+    
     @Environment(\.managedObjectContext) private var viewContext
     
     @FetchRequest(
@@ -45,7 +48,7 @@ struct GroceryListView: View {
     @State var newItemName = ""
     
     private var items: [GroceryItem] {
-        guard let itemSet = selectedList?.items as? Set<GroceryItem> else {
+        guard let itemSet = viewModel.selectedGroceryList?.items as? Set<GroceryItem> else {
             return []
         }
         return itemSet.sorted { $0.itemName ?? "" < $1.itemName ?? "" }
@@ -63,7 +66,7 @@ struct GroceryListView: View {
                                 
                                 HStack {
                                 // Edit View Triggered by Clicking the Text
-                                    NavigationLink(destination: GroceryEditView(passedGroceryItem: item, passedList: $selectedList)) {
+                                    NavigationLink(destination: GroceryEditView(passedGroceryItem: item, viewModel: viewModel)) {
                                         Text(item.itemName ?? "default value")
                                             .contentShape(Rectangle())
                                     }
@@ -93,7 +96,7 @@ struct GroceryListView: View {
                         }
                         // When clicked displays GroceryEditView where they can add new item
                         ToolbarItem(placement: .navigationBarTrailing) {
-                            NavigationLink(destination: GroceryEditView(passedGroceryItem: nil, passedList: $selectedList)){
+                            NavigationLink(destination: GroceryEditView(passedGroceryItem: nil, viewModel: viewModel)){
                                 Text(" + ")
                                     .font(.headline)
                             }
