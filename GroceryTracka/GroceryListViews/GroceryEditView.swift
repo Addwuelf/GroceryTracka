@@ -2,7 +2,7 @@ import SwiftUI
 
 struct GroceryEditView: View {
     
-    @Binding private var selectedList : GroceryList?
+   
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @Environment(\.managedObjectContext) private var viewContext
     @State var selectedGroceryItem: GroceryItem?

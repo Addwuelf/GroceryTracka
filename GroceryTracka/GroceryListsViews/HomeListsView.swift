@@ -79,31 +79,33 @@ struct HomeListsView: View {
                                             if(trimmedName.description.isEmpty) {
                                                 newListName = "List"
                                                 listName = newListName
-                                                showingAlert = false
-                                                let trimmedName = newListName.trimmingCharacters(in: .whitespacesAndNewlines)
-                                                if(trimmedName.description.isEmpty) {
-                                                    newListName = "List"
-                                                    listName = newListName
-                                                }
-                                                addAction()
-                                            }
+                                        }
+                                            addAction()
                                         }
                                     }
                                 }
-                                .onDelete(perform: deleteItem)
-                                
                             }
+                            .onDelete(perform: deleteItem)
+                            
                         }
-                        
-                        .toolbar() {
-                            // Allows user to delete items
-                            ToolbarItem(placement: .navigationBarTrailing) {
-                                EditButton()
+                    }
+                    
+                    .toolbar() {
+                        // Allows user to delete items
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            EditButton()
+                        }
+                        // When clicked displays a alert
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button(" + "){
+                                showingAlert = true
                             }
-                            // When clicked displays a alert
-                            ToolbarItem(placement: .navigationBarTrailing) {
-                                Button(" + "){
-                                    showingAlert = true
+                            .font(.headline)
+                           // Alert allows user to create a new Grocery List
+                            .alert("Enter List Name", isPresented: $showingAlert) {
+                                
+                                VStack {
+                                    TextField("", text: $newListName)
                                 }
                                 Button("Ok", role: .cancel) {
                                     listName = newListName
@@ -113,24 +115,17 @@ struct HomeListsView: View {
                                     if(trimmedName.description.isEmpty) {
                                         newListName = "List"
                                         listName = newListName
-                                        showingAlert = false
-                                        selectedGroceryList = nil
-                                        let trimmedName = newListName.trimmingCharacters(in: .whitespacesAndNewlines)
-                                        if(trimmedName.description.isEmpty) {
-                                            newListName = "List"
-                                            listName = newListName
-                                        }
-                                        addAction()
-                                    }
-                                    
+                                }
+                                    addAction()
                                 }
                                 
                             }
+                            
                         }
-                        
                     }
                     
                 }
+                
             }
         }
     }
@@ -153,28 +148,27 @@ struct HomeListsView: View {
                     viewModel.selectedGroceryList = GroceryList(context: viewContext)
                     viewModel.selectedGroceryList?.listname = newListName
                 }
-                newListName = ""
-                do {
-                    // Trys to save the changes
-                    try viewContext.save()
-                } catch {
-                    // Display errors
-                    let nsError = error as NSError
-                    fatalError("Unresolved error \(nsError) \(nsError.userInfo)")
-                }
-            }
-        }
-        
-        func saveContext(_ context: NSManagedObjectContext ) {
+            newListName = ""
             do {
-                try context.save()
+                // Trys to save the changes
+                try viewContext.save()
             } catch {
+                // Display errors
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError) \(nsError.userInfo)")
             }
         }
     }
-
+    
+    func saveContext(_ context: NSManagedObjectContext ) {
+        do {
+            try context.save()
+        } catch {
+            let nsError = error as NSError
+            fatalError("Unresolved error \(nsError) \(nsError.userInfo)")
+        }
+    }
+}
 #Preview {
     HomeListsView()
 }
