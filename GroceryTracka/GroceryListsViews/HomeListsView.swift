@@ -55,7 +55,7 @@ struct HomeListsView: View {
                                     Button(action: {
                                         showingEditAlert = true
                                         newListName = list.listname ?? "New List"
-                                        selectedGroceryList = list
+                                        viewModel.selectedGroceryList = list
                                         
                                     }) {
                                         Image(systemName: "info.circle")
