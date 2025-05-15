@@ -1,14 +1,15 @@
-//
-//  HomeListsView.swift
-//  GroceryTracka
-//
-//  Created by Adam Wuelfing on 5/8/25.
-//
 
 import SwiftUI
 import CoreData
 
+// handles passing of selectedGroceryList
+class GroceryListViewModel: ObservableObject {
+    @Published var selectedGroceryList: GroceryList?
+}
+
 struct HomeListsView: View {
+    
+    @StateObject private var viewModel = GroceryListViewModel()
     
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
@@ -19,8 +20,6 @@ struct HomeListsView: View {
         animation: .default)
     private var lists: FetchedResults<GroceryList>
     
-    
-    @State var selectedGroceryList: GroceryList?
     @State private var listName = ""
     @State private var newListName = ""
     @State private var showingAlert = false
@@ -37,34 +36,48 @@ struct HomeListsView: View {
                             ForEach(lists) { list in
                                 
                                 HStack {
+                                   
                                     // Contentviews View Triggered by Clicking the Text
-                                    NavigationLink(destination: Contetview(selectedList: list)) {
+                                    NavigationLink(
+                                        destination: Contetview(viewModel: viewModel)
+                                            .onAppear {
+                                                viewModel.selectedGroceryList = list
+                                            }
+                                    ) {
                                         Text(list.listname ?? "default value")
                                             .contentShape(Rectangle())
                                     }
-                                    .onTapGesture {
-                                        // Recipe View Triggered by Clicking the Info Icon
-                                        Button(action: {
-                                            showingEditAlert = true
-                                            newListName = list.listname ?? "New List"
-                                            selectedGroceryList = list
-                                            
-                                        }) {
-                                            Image(systemName: "info.circle")
-                                                .foregroundColor(.blue)
-                                                .padding()
+                                    
+                       
+                                    
+                                    
+                                 // Displays alert
+                                    Button(action: {
+                                        showingEditAlert = true
+                                        newListName = list.listname ?? "New List"
+                                        viewModel.selectedGroceryList = list
+                                        
+                                    }) {
+                                        Image(systemName: "info.circle")
+                                            .foregroundColor(.blue)
+                                            .padding()
+                                    }
+                                    .buttonStyle(BorderedButtonStyle())
+                                    .alert("List Name", isPresented: $showingEditAlert) {
+                                        
+                                        VStack {
+                                            TextField("", text: $newListName)
+                                                .onChange(of: newListName) {
+                                                    showingEditAlert.toggle()
+                                                    showingEditAlert.toggle()
+                                                }
                                         }
-                                        .buttonStyle(BorderedButtonStyle())
-                                        .alert("List Name", isPresented: $showingEditAlert) {
-                                            
-                                            VStack {
-                                                TextField("", text: $newListName)
-                                                    .onChange(of: newListName) {
-                                                        showingEditAlert.toggle()
-                                                        showingEditAlert.toggle()
-                                                    }
-                                            }
-                                            Button("Ok", role: .cancel) {
+                                        Button("Ok", role: .cancel) {
+                                            listName = newListName
+                                            showingAlert = false
+                                            let trimmedName = newListName.trimmingCharacters(in: .whitespacesAndNewlines)
+                                            if(trimmedName.description.isEmpty) {
+                                                newListName = "List"
                                                 listName = newListName
                                                 showingAlert = false
                                                 let trimmedName = newListName.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -92,14 +105,13 @@ struct HomeListsView: View {
                                 Button(" + "){
                                     showingAlert = true
                                 }
-                                .font(.headline)
-                                // Alert allows user to create a new Grocery List
-                                .alert("Enter List Name", isPresented: $showingAlert) {
-                                    
-                                    VStack {
-                                        TextField("", text: $newListName)
-                                    }
-                                    Button("Ok", role: .cancel) {
+                                Button("Ok", role: .cancel) {
+                                    listName = newListName
+                                    showingAlert = false
+                                    viewModel.selectedGroceryList = nil
+                                    let trimmedName = newListName.trimmingCharacters(in: .whitespacesAndNewlines)
+                                    if(trimmedName.description.isEmpty) {
+                                        newListName = "List"
                                         listName = newListName
                                         showingAlert = false
                                         selectedGroceryList = nil
@@ -122,23 +134,24 @@ struct HomeListsView: View {
             }
         }
     }
-        // Allow deletion of a Grocery List
-        func deleteItem(at offsetss: IndexSet) {
-            offsetss.map {lists[$0]}.forEach(viewContext.delete)
-            
-            saveContext(viewContext)
-            
-        }
+    
+    // Allow deletion of a Grocery List
+    func deleteItem(at offsetss: IndexSet) {
+        offsetss.map {lists[$0]}.forEach(viewContext.delete)
         
-        func addAction() {
-            withAnimation {
-                if let list = selectedGroceryList {
+        saveContext(viewContext)
+        
+    }
+    
+    func addAction() {
+        withAnimation {
+            if let list = viewModel.selectedGroceryList {
                     // If there's an existing list, updates its name instead of creating a new one
                     list.listname = newListName
                 } else {
                     // If no list is selected, creates a new one
-                    selectedGroceryList = GroceryList(context: viewContext)
-                    selectedGroceryList?.listname = newListName
+                    viewModel.selectedGroceryList = GroceryList(context: viewContext)
+                    viewModel.selectedGroceryList?.listname = newListName
                 }
                 newListName = ""
                 do {
