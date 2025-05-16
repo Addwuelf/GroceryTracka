@@ -11,4 +11,11 @@
         <attribute name="listname" optional="YES" attributeType="String"/>
         <relationship name="items" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="GroceryItem" inverseName="grocerylist" inverseEntity="GroceryItem"/>
     </entity>
+    <entity name="SavedCategories" representedClassName="SavedCategories" syncable="YES">
+        <attribute name="infos" optional="YES" attributeType="Transformable"/>
+    </entity>
+    <entity name="SavedSettings" representedClassName="SavedSettings" syncable="YES">
+        <attribute name="infos" optional="YES" attributeType="Transformable"/>
+    </entity>
+    <entity name="Settings" representedClassName="Settings" syncable="YES"/>
 </model>

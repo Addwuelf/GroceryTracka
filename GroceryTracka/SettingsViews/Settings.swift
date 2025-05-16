@@ -1,12 +1,20 @@
 
 
 import SwiftUI
+import CoreData
 
 
 struct Settings: View {
     
-    var categories: [String] = ["Produce", "Dairy", "Meat", "Snack"]
+    @Environment(\.managedObjectContext) private var viewContext
+    @FetchRequest(
+            entity: SavedSettings.entity(),
+            sortDescriptors: []
+    ) private var entities: FetchedResults<SavedSettings>
     
+  
+    
+
     @State var newCategory: String = ""
     
     var body: some View {
@@ -15,7 +23,7 @@ struct Settings: View {
             Form {
                 ColorPicker("Background color", selection: .constant(.red))
                 DisclosureGroup("Categories") {
-                    ForEach(categories, id: \.self) { category in
+                    ForEach(getAllCategories(), id: \.self) { category in
                         Text(category)
                     }
                 }
@@ -24,16 +32,44 @@ struct Settings: View {
                     HStack {
                         TextField("Category Name", text: $newCategory)
                         
-                        Button("Add", action: addCategory)
+                        Button("Add") {
+                            addCategory(name: newCategory)
+                            newCategory = ""
+                        }
                     }
                 }
                 
             }
         }
     }
-     func addCategory() {
-         var new = newCategory
-         categories.append()
+    
+    func getAllCategories() -> [String] {
+            var savedCategoryNames = entities.compactMap { $0.infos }.flatMap { $0 }
+
+            if savedCategoryNames.isEmpty {
+                let predefinedCategories = ["Produce", "Dairy", "Meat", "Snack"]
+
+                for category in predefinedCategories {
+                    addCategory(name: category)
+                }
+
+                return predefinedCategories
+            }
+
+            return savedCategoryNames
+        }
+    
+    func addCategory(name: String) {
+        let newSavedCategory = SavedSettings(context: viewContext)
+        if(name != "") {
+            newSavedCategory.wrappedInfos.append(name)
+    }
+         do {
+             try viewContext.save()
+         } catch {
+             let nsError = error as NSError
+             fatalError("Unresolved error (nsError) (nsError.userInfo)")
+         }
     }
 }
 

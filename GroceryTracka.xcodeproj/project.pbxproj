@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		C44BAD922DD6F520001E8A53 /* SavedSettings+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44BAD912DD6F520001E8A53 /* SavedSettings+CoreDataProperties.swift */; };
+		C44BAD932DD6F520001E8A53 /* SavedSettings+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44BAD902DD6F520001E8A53 /* SavedSettings+CoreDataClass.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		C4F253972D8BB34A00C4366D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,6 +29,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C44BAD902DD6F520001E8A53 /* SavedSettings+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SavedSettings+CoreDataClass.swift"; sourceTree = "<group>"; };
+		C44BAD912DD6F520001E8A53 /* SavedSettings+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SavedSettings+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		C4F253812D8BB34500C4366D /* GroceryTracka.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GroceryTracka.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4F253962D8BB34A00C4366D /* GroceryTrackaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GroceryTrackaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4F253A02D8BB34A00C4366D /* GroceryTrackaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GroceryTrackaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -75,6 +82,8 @@
 		C4F253782D8BB34500C4366D = {
 			isa = PBXGroup;
 			children = (
+				C44BAD902DD6F520001E8A53 /* SavedSettings+CoreDataClass.swift */,
+				C44BAD912DD6F520001E8A53 /* SavedSettings+CoreDataProperties.swift */,
 				C4F253832D8BB34500C4366D /* GroceryTracka */,
 				C4F253992D8BB34A00C4366D /* GroceryTrackaTests */,
 				C4F253A32D8BB34A00C4366D /* GroceryTrackaUITests */,
@@ -236,6 +245,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C44BAD922DD6F520001E8A53 /* SavedSettings+CoreDataProperties.swift in Sources */,
+				C44BAD932DD6F520001E8A53 /* SavedSettings+CoreDataClass.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

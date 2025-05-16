@@ -100,6 +100,14 @@ struct GroceryListView: View {
                                 Text(" + ")
                                     .font(.headline)
                             }
+                            
+                        }
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            NavigationLink(destination: Settings()){
+                                Text(" ] ")
+                                    .font(.headline)
+                            }
+                            
                         }
                     }
                     
