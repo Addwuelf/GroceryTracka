@@ -106,6 +106,10 @@ struct GroceryListView: View {
         itemsToDelete.forEach { viewContext.delete($0) }
         
         saveContext()
+        
+        DispatchQueue.main.async {
+            viewModel.objectWillChange.send()
+        }
     }
     
     func saveContext() {
