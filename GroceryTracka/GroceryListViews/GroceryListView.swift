@@ -24,126 +24,100 @@ struct GroceryListView: View {
     
     @ObservedObject var viewModel: GroceryListViewModel
     @Binding var itemName: String
-    @Binding var logged : Bool
+    @Binding var logged: Bool
     @Binding var selectedItem: GroceryItem?
-    private var selectedList: GroceryList? {
-        viewModel.selectedGroceryList
-    }
     
     @Environment(\.managedObjectContext) private var viewContext
     
-    @FetchRequest(
-        entity: GroceryItem.entity(),
-        sortDescriptors: [NSSortDescriptor(keyPath: \GroceryItem.itemName, ascending: true)],
-        animation: .default)
-    private var itemss: FetchedResults<GroceryItem>
-    
-    @State private var selectedRecipe: String?
-    @State private var isEditing = false
-    @State private var isViewingRecipe = false
-    
-    // Grocery Items Placeholder
-    @State var groceryItems = ["Chicken", "Milk", "Banana"]
-    @State var showAddItemOverlay = false
-    @State var newItemName = ""
-    
-    private var items: [GroceryItem] {
-        guard let itemSet = viewModel.selectedGroceryList?.items as? Set<GroceryItem> else {
-            return []
+    private var itemss: [GroceryItem] {
+            guard let itemSet = viewModel.selectedGroceryList?.items as? Set<GroceryItem> else {
+                return []
+            }
+            return itemSet.sorted { $0.itemName ?? "" < $1.itemName ?? "" }
         }
-        return itemSet.sorted { $0.itemName ?? "" < $1.itemName ?? "" }
+    
+    @State private var expandedCategories: [String: Bool] = [:]
+    
+    // Extracts unique category names from items
+    private var categoryNames: [String] {
+        Array(Set(itemss.compactMap { $0.category ?? "Uncategorized" })).sorted()
     }
     
-    // Gets item categories
-    @FetchRequest(
-            entity: SavedSettings.entity(),
-            sortDescriptors: []
-    ) private var entities: FetchedResults<SavedSettings>
-    
-    private var savedCategoryNames: [String] {
-        entities.compactMap { $0.infos }.flatMap { $0 }
+    // Precomputes grouped items for better performance
+    private var groupedItems: [String: [GroceryItem]] {
+        Dictionary(grouping: itemss, by: { $0.category ?? "Uncategorized" })
     }
-    
     
     var body: some View {
         VStack(spacing: 0) {
             Text("Grocery List").font(.largeTitle)
-            NavigationStack() {
-                ZStack{
-                    VStack {
-                        List {
-                            ForEach(items) { item in
-                                
+            NavigationStack {
+                List {
+                    ForEach(categoryNames, id: \.self) { category in
+                        Section(header: Text(category).font(.headline)) {
+                            let filteredItems = groupedItems[category] ?? [] // Precompute filtered items here
+                            ForEach(filteredItems, id: \.self) { item in
                                 HStack {
-                                // Edit View Triggered by Clicking the Text
                                     NavigationLink(destination: GroceryEditView(passedGroceryItem: item, viewModel: viewModel)) {
                                         Text(item.itemName ?? "default value")
-                                            .contentShape(Rectangle())
                                     }
-
-                                        // Recipe View Triggered by Clicking the Info Icon
-                                        Button(action: {
-                                            itemName = item.itemName ?? "Chicken"
-                                            
-                                            logged = true
-                                        }) {
-                                            Image(systemName: "info.circle")
-                                                .foregroundColor(.blue)
-                                                .padding()
-                                        }
-                                        .buttonStyle(BorderedButtonStyle())
+                                    
+                                    Button(action: {
+                                        itemName = item.itemName ?? "default"
+                                        logged = true
+                                    }) {
+                                        Image(systemName: "info.circle")
+                                            .foregroundColor(.blue)
+                                            .padding()
+                                    }
+                                    .buttonStyle(BorderedButtonStyle())
                                 }
                             }
-                            .onDelete(perform: deleteItem)
-                           
+                            .onDelete { indexSet in deleteItem(at: indexSet, for: category) }
                         }
                     }
-                    
-                    .toolbar() {
-                        // Allows user to delete items
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            EditButton()
-                        }
-                        // When clicked displays GroceryEditView where they can add new item
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            NavigationLink(destination: GroceryEditView(passedGroceryItem: nil, viewModel: viewModel)){
-                                Text(" + ")
-                                    .font(.headline)
-                            }
-                            
-                        }
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            NavigationLink(destination: Settings()){
-                                Text(" ] ")
-                                    .font(.headline)
-                            }
-                            
-                        }
-                    }
-                    
                 }
-                
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        EditButton()
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        NavigationLink(destination: GroceryEditView(passedGroceryItem: nil, viewModel: viewModel)) {
+                            Text(" + ")
+                                .font(.headline)
+                        }
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        NavigationLink(destination: Settings()) {
+                            Text(" ] ")
+                                .font(.headline)
+                        }
+                    }
+                }
             }
         }
     }
     
-    func deleteItem(at offsetss: IndexSet) {
-        offsetss.map {items[$0]}.forEach(viewContext.delete)
+    // Corrected delete function to remove items by category
+    func deleteItem(at offsets: IndexSet, for category: String) {
+        guard let categoryItems = groupedItems[category] else { return }
+        let itemsToDelete = offsets.map { categoryItems[$0] }
         
-        saveContext(viewContext)
+        itemsToDelete.forEach { viewContext.delete($0) }
         
+        saveContext()
     }
     
-    func saveContext(_ context: NSManagedObjectContext ) {
+    func saveContext() {
         do {
-            try context.save()
+            try viewContext.save()
         } catch {
             let nsError = error as NSError
             fatalError("Unresolved error \(nsError) \(nsError.userInfo)")
         }
     }
-    
 }
+
 
 
 
