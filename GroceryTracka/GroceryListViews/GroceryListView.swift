@@ -54,6 +54,16 @@ struct GroceryListView: View {
         return itemSet.sorted { $0.itemName ?? "" < $1.itemName ?? "" }
     }
     
+    // Gets item categories
+    @FetchRequest(
+            entity: SavedSettings.entity(),
+            sortDescriptors: []
+    ) private var entities: FetchedResults<SavedSettings>
+    
+    private var savedCategoryNames: [String] {
+        entities.compactMap { $0.infos }.flatMap { $0 }
+    }
+    
     
     var body: some View {
         VStack(spacing: 0) {
