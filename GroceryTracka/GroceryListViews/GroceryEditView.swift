@@ -8,12 +8,18 @@ struct GroceryEditView: View {
     @State var selectedGroceryItem: GroceryItem?
     @State var itemName: String
     @State private var amount = ""
-    @State private var itemCategory = ""
     @State private var itemMeasurment: MeasurementOptions = .none
     @ObservedObject var viewModel: GroceryListViewModel
     private var selectedList: GroceryList? {
         viewModel.selectedGroceryList
     }
+    
+    @FetchRequest(
+            entity: SavedSettings.entity(),
+            sortDescriptors: []
+    ) private var entities: FetchedResults<SavedSettings>
+    
+    @State var selectedCategory: String = ""
 
     
     init(passedGroceryItem: GroceryItem?, viewModel: GroceryListViewModel) {
@@ -22,14 +28,14 @@ struct GroceryEditView: View {
             _selectedGroceryItem = State(initialValue: groceryItem)
             _itemName = State(initialValue: groceryItem.itemName ?? "")
             _amount = State(initialValue: groceryItem.iamount ?? "")
-            _itemCategory = State(initialValue: groceryItem.category ?? "")
+            _selectedCategory = State(initialValue: groceryItem.category ?? "")
             _itemMeasurment = State(initialValue: MeasurementOptions(rawValue: groceryItem.measurment ?? "") ?? .none)
             
         }
         else {
             _itemName = State(initialValue: "")
             _amount = State(initialValue: "")
-            _itemCategory = State(initialValue: "")
+            _selectedCategory = State(initialValue: "")
             _itemMeasurment = State(initialValue: MeasurementOptions(rawValue: "") ??  .none)
         }
        
@@ -41,10 +47,13 @@ struct GroceryEditView: View {
                     
                 }
             }
-            HStack {
-                Text("Category:")
-                TextField("", text: $itemCategory)
+            Picker("Catergory:", selection: $selectedCategory) {
+                var savedCategoryNames = entities.compactMap { $0.infos }.flatMap { $0 }
+                ForEach(savedCategoryNames, id: \.self) { cat in
+                    Text(cat)
+                }
             }
+            
             HStack {
                 Text("Amount:")
                 TextField("", text: $amount)
@@ -83,7 +92,7 @@ struct GroceryEditView: View {
             // Updates the properties of the grocery item using the values from UI
             selectedGroceryItem?.iamount = amount
             selectedGroceryItem?.itemName = itemName
-            selectedGroceryItem?.category = itemCategory
+            selectedGroceryItem?.category = selectedCategory
             selectedGroceryItem?.measurment = itemMeasurment.rawValue
 
             // If a grocery list is currently selected, adds this grocery item
