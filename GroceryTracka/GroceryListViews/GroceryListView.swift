@@ -15,6 +15,9 @@ struct Contetview: View {
         }
         else {
             GroceryListView(viewModel: viewModel,itemName: $itemName, logged: $logged, selectedItem: $selectedItem)
+                .onAppear(
+                    
+                )
         }
     }
 }
@@ -28,6 +31,11 @@ struct GroceryListView: View {
     @Binding var selectedItem: GroceryItem?
     
     @Environment(\.managedObjectContext) private var viewContext
+    @FetchRequest(
+            entity: SavedSettings.entity(),
+            sortDescriptors: []
+    ) private var entities: FetchedResults<SavedSettings>
+    
     
     private var itemss: [GroceryItem] {
             guard let itemSet = viewModel.selectedGroceryList?.items as? Set<GroceryItem> else {
@@ -60,6 +68,9 @@ struct GroceryListView: View {
                                 HStack {
                                     NavigationLink(destination: GroceryEditView(passedGroceryItem: item, viewModel: viewModel)) {
                                         Text(item.itemName ?? "default value")
+                                    }
+                                    .onAppear {
+                                        
                                     }
                                     
                                     Button(action: {
@@ -120,13 +131,29 @@ struct GroceryListView: View {
             fatalError("Unresolved error \(nsError) \(nsError.userInfo)")
         }
     }
+
+
+
+
+// Ensure categories exist on app startup
+    private func ensureDefaultCategoriesExist() {
+        let existingCategories = entities.compactMap { $0.infos }.flatMap { $0 }
+
+        if existingCategories.isEmpty {
+            let predefinedCategories = ["","Produce", "Dairy", "Meat", "Snack"]
+            predefinedCategories.forEach { addCategory(name: $0) }
+        }
+    }
+
+    // Function to add a new category
+    private func addCategory(name: String) {
+        let newSavedCategory = SavedSettings(context: viewContext)
+        newSavedCategory.wrappedInfos.append(name)
+        saveContext()
+    }
+
+
 }
-
-
-
-
-
-
 
 
 struct GroceryListView_Previews: PreviewProvider {

@@ -38,7 +38,7 @@ struct GroceryEditView: View {
             _selectedCategory = State(initialValue: "")
             _itemMeasurment = State(initialValue: MeasurementOptions(rawValue: "") ??  .none)
         }
-       
+ 
     }
     var body: some View {
         Form {
