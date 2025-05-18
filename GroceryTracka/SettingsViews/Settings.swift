@@ -55,9 +55,9 @@ struct Settings: View {
 
     // Fetch all categories from Core Data
     func getAllCategories() -> [String] {
-        var savedCategoryNames = entities.compactMap { $0.infos }.flatMap { $0 }
+        let savedCategoryNames = entities.compactMap { $0.infos }.flatMap { $0 }
         if savedCategoryNames.isEmpty {
-            let predefinedCategories = ["", "Produce", "Dairy", "Meat", "Snack"]
+            let predefinedCategories = ["Uncategorized", "Produce", "Dairy", "Meat", "Snack"]
             predefinedCategories.forEach { addCategory(name: $0) }
             return predefinedCategories
         }

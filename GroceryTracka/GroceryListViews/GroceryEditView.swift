@@ -19,7 +19,7 @@ struct GroceryEditView: View {
             sortDescriptors: []
     ) private var entities: FetchedResults<SavedSettings>
     
-    @State var selectedCategory: String = ""
+    @State var selectedCategory: String = "Uncategorized"
 
     
     init(passedGroceryItem: GroceryItem?, viewModel: GroceryListViewModel) {
@@ -28,14 +28,14 @@ struct GroceryEditView: View {
             _selectedGroceryItem = State(initialValue: groceryItem)
             _itemName = State(initialValue: groceryItem.itemName ?? "")
             _amount = State(initialValue: groceryItem.iamount ?? "")
-            _selectedCategory = State(initialValue: groceryItem.category ?? "")
+            _selectedCategory = State(initialValue: groceryItem.category ?? "Uncategorized")
             _itemMeasurment = State(initialValue: MeasurementOptions(rawValue: groceryItem.measurment ?? "") ?? .none)
             
         }
         else {
             _itemName = State(initialValue: "")
             _amount = State(initialValue: "")
-            _selectedCategory = State(initialValue: "")
+            _selectedCategory = State(initialValue: "Uncategorized")
             _itemMeasurment = State(initialValue: MeasurementOptions(rawValue: "") ??  .none)
         }
  
@@ -64,7 +64,7 @@ struct GroceryEditView: View {
                         }
                     }
             }
-                Picker("Measurment:", selection: $itemMeasurment) {
+                Picker("Measurement:", selection: $itemMeasurment) {
                     ForEach(MeasurementOptions.allCases, id: \.self) {option in
                         Text(option.rawValue)
                     }

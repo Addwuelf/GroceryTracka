@@ -10,16 +10,13 @@ struct Contetview: View {
     @State var itemName = ""
     
     var body: some View {
-        if logged {
-            RecipeListView(ingredient: itemName)
+            NavigationStack {
+                GroceryListView(viewModel: viewModel, itemName: $itemName, logged: $logged, selectedItem: $selectedItem)
+                    .navigationDestination(isPresented: $logged) {
+                        RecipeListView(ingredient: itemName, viewModel: viewModel)
+                    }
+            }
         }
-        else {
-            GroceryListView(viewModel: viewModel,itemName: $itemName, logged: $logged, selectedItem: $selectedItem)
-                .onAppear(
-                    
-                )
-        }
-    }
 }
 
 // Displays all of the users groceryItems. Also lets user manage items.
@@ -140,7 +137,7 @@ struct GroceryListView: View {
         let existingCategories = entities.compactMap { $0.infos }.flatMap { $0 }
 
         if existingCategories.isEmpty {
-            let predefinedCategories = ["","Produce", "Dairy", "Meat", "Snack"]
+            let predefinedCategories = ["Uncategorized","Produce", "Dairy", "Meat", "Snack", "Bread"]
             predefinedCategories.forEach { addCategory(name: $0) }
         }
     }
