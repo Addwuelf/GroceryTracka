@@ -52,7 +52,6 @@ struct RecipeDetailView: View {
 
             Spacer()
         }
-        .navigationTitle("Recipe Details")
         .onAppear {
             fetchRecipeDetails(for: recipe.idMeal)
         }

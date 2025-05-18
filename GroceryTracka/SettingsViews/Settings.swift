@@ -11,7 +11,7 @@ struct Settings: View {
     
     @FetchRequest(entity: SavedColors.entity(), sortDescriptors: [])
     private var colors: FetchedResults<SavedColors>
-    @State private var categoryColor: Color = .red
+    @State private var categoryColor: Color = .cyan
     @State private var showingDeleteAlert = false
     @State private var selectedCategory: String? // Track which category is tapped
     @State var newCategory: String = ""
@@ -103,7 +103,13 @@ struct Settings: View {
         let uiColor = UIColor(color)
         guard let components = uiColor.cgColor.components else { return }
 
-        let newColor = colors.first
+        var newColor: SavedColors?
+
+        if colors.first == nil {
+            newColor = SavedColors(context: viewContext)
+        } else {
+            newColor = colors.first
+        }
         newColor?.catred = Int16(components[0] * 255) // Red
         newColor?.catgreen = Int16(components[1] * 255) // Green
         newColor?.catblue = Int16(components[2] * 255) // Blue

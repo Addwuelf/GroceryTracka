@@ -61,7 +61,6 @@ struct GroceryListView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            Text("Grocery List").font(.largeTitle)
             NavigationStack {
                 List {
                     ForEach(categoryNames, id: \.self) { category in
@@ -158,7 +157,7 @@ struct GroceryListView: View {
     func loadSavedColor() -> Color {
         
         guard let col = colors.first else {
-            return .white
+            return .cyan
         }
         do {
             let red = Double(col.catred) / 255.0
