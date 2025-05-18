@@ -65,7 +65,7 @@ struct GroceryListView: View {
             NavigationStack {
                 List {
                     ForEach(categoryNames, id: \.self) { category in
-                        Section(header: Text(category).font(.headline)) {
+                        Section(header: Text(category).font(.headline).background(loadSavedColor()).foregroundStyle(.white)) {
                             let filteredItems = groupedItems[category] ?? [] // Precompute filtered items here
                             ForEach(filteredItems, id: \.self) { item in
                                 HStack {
@@ -167,8 +167,6 @@ struct GroceryListView: View {
 
             return Color(red: red, green: green, blue: blue)
             
-        } catch {
-            print("Error fetching saved color: (error)")
         }
 
         return .white //  Default fallback color
