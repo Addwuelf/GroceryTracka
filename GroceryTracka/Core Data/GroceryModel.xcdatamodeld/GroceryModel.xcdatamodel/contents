@@ -14,6 +14,11 @@
     <entity name="SavedCategories" representedClassName="SavedCategories" syncable="YES">
         <attribute name="infos" optional="YES" attributeType="Transformable"/>
     </entity>
+    <entity name="SavedColors" representedClassName="SavedColors" syncable="YES" codeGenerationType="class">
+        <attribute name="catblue" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="catgreen" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="catred" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
     <entity name="SavedSettings" representedClassName="SavedSettings" syncable="YES">
         <attribute name="infos" optional="YES" attributeType="Transformable"/>
     </entity>

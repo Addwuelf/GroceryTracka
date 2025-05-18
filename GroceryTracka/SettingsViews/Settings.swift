@@ -8,7 +8,10 @@ struct Settings: View {
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(entity: SavedSettings.entity(), sortDescriptors: [])
     private var entities: FetchedResults<SavedSettings>
-
+    
+    @FetchRequest(entity: SavedColors.entity(), sortDescriptors: [])
+    private var colors: FetchedResults<SavedColors>
+    @State private var categoryColor: Color = .red
     @State private var showingDeleteAlert = false
     @State private var selectedCategory: String? // Track which category is tapped
     @State var newCategory: String = ""
@@ -16,7 +19,16 @@ struct Settings: View {
     var body: some View {
         VStack {
             Form {
-                ColorPicker("Background color", selection: .constant(.red))
+                ColorPicker("Background color", selection: $categoryColor)
+                    .onAppear {
+                        if let savedColor = colors.first {
+                            categoryColor = loadCategoryColor(from: savedColor)
+                        }
+                    }
+                    .onChange(of: categoryColor) { newColor in
+                        saveCategoryColor(newColor)
+                    }
+                    
                 
                 // Categories List
                 DisclosureGroup("Categories") {
@@ -86,7 +98,31 @@ struct Settings: View {
             }
         }
     }
+    
+    func saveCategoryColor(_ color: Color) {
+        let uiColor = UIColor(color)
+        guard let components = uiColor.cgColor.components else { return }
 
+        let newColor = colors.first
+        newColor?.catred = Int16(components[0] * 255) // Red
+        newColor?.catgreen = Int16(components[1] * 255) // Green
+        newColor?.catblue = Int16(components[2] * 255) // Blue
+
+        do {
+            try viewContext.save()
+        } catch {
+            print("Error saving color: (error)")
+        }
+    }
+    
+    func loadCategoryColor(from colors: SavedColors) -> Color {
+        let red = Double(colors.catred) / 255.0
+        let green = Double(colors.catgreen) / 255.0
+        let blue = Double(colors.catblue) / 255.0
+
+        return Color(red: red, green: green, blue: blue)
+    }
+    
     // Save changes to Core Data
     func saveContext() {
         do {

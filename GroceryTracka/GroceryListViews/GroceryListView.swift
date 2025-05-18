@@ -32,6 +32,10 @@ struct GroceryListView: View {
             entity: SavedSettings.entity(),
             sortDescriptors: []
     ) private var entities: FetchedResults<SavedSettings>
+    @FetchRequest(
+            entity: SavedColors.entity(),
+            sortDescriptors: []
+    ) private var colors: FetchedResults<SavedColors>
     
     
     private var itemss: [GroceryItem] {
@@ -41,6 +45,7 @@ struct GroceryListView: View {
             return itemSet.sorted { $0.itemName ?? "" < $1.itemName ?? "" }
         }
     
+    @State private var categoryColor: Color = .white
     @State private var expandedCategories: [String: Bool] = [:]
     
     // Extracts unique category names from items
@@ -50,6 +55,7 @@ struct GroceryListView: View {
     
     // Precomputes grouped items for better performance
     private var groupedItems: [String: [GroceryItem]] {
+        
         Dictionary(grouping: itemss, by: { $0.category ?? "Uncategorized" })
     }
     
@@ -147,6 +153,25 @@ struct GroceryListView: View {
         let newSavedCategory = SavedSettings(context: viewContext)
         newSavedCategory.wrappedInfos.append(name)
         saveContext()
+    }
+    
+    func loadSavedColor() -> Color {
+        
+        guard let col = colors.first else {
+            return .white
+        }
+        do {
+            let red = Double(col.catred) / 255.0
+            let green = Double(col.catgreen) / 255.0
+            let blue = Double(col.catblue) / 255.0
+
+            return Color(red: red, green: green, blue: blue)
+            
+        } catch {
+            print("Error fetching saved color: (error)")
+        }
+
+        return .white //  Default fallback color
     }
 
 
