@@ -23,7 +23,7 @@ struct RecipeDetailView: View {
             Text(recipe.strMeal)
                 .font(.largeTitle)
                 .padding()
-
+            
             AsyncImage(url: URL(string: recipe.strMealThumb)) { image in
                 image.resizable()
                     .aspectRatio(contentMode: .fit)
@@ -31,7 +31,7 @@ struct RecipeDetailView: View {
                 ProgressView()
             }
             .frame(width: 300, height: 300)
-
+            
             // Ingredients List
             List(ingredients, id: \.0) { ingredient, measure in
                 Button(action: { openGroceryEditView(ingredient: ingredient, measurement: measure) }) {
@@ -42,13 +42,15 @@ struct RecipeDetailView: View {
                     }
                 }
             }
-
+            
+            ScrollView{
             // Collapsible Instructions Section
             DisclosureGroup("Instructions") {
                 Text(instructions)
                     .padding()
             }
             .padding()
+        }
 
             Spacer()
         }
