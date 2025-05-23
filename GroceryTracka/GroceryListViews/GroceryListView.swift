@@ -102,8 +102,8 @@ struct GroceryListView: View {
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
                         NavigationLink(destination: Settings()) {
-                            Text(" ] ")
-                                .font(.headline)
+                            Image(systemName: "gear")
+                                .foregroundColor(.blue)
                         }
                     }
                 }
