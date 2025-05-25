@@ -12,9 +12,6 @@ struct Contetview: View {
     var body: some View {
             NavigationStack {
                 GroceryListView(viewModel: viewModel, itemName: $itemName, logged: $logged, selectedItem: $selectedItem)
-                    .navigationDestination(isPresented: $logged) {
-                        RecipeListView(ingredient: itemName, viewModel: viewModel)
-                    }
             }
         }
 }
@@ -26,6 +23,7 @@ struct GroceryListView: View {
     @Binding var itemName: String
     @Binding var logged: Bool
     @Binding var selectedItem: GroceryItem?
+    @State private var navigateToRecipe = false
     
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(
@@ -77,7 +75,7 @@ struct GroceryListView: View {
                                     
                                     Button(action: {
                                         itemName = item.itemName ?? "default"
-                                        logged = true
+                                        navigateToRecipe = true
                                     }) {
                                         Image(systemName: "info.circle")
                                             .foregroundColor(.blue)
@@ -107,8 +105,17 @@ struct GroceryListView: View {
                         }
                     }
                 }
+            
             }
+            
         }
+        .background(
+                        NavigationLink(
+                            destination: RecipeListView(ingredient: itemName, viewModel: viewModel),
+                            isActive: $navigateToRecipe
+                        ) { EmptyView() }
+                            .hidden()
+                    )
     }
     
     // Corrected delete function to remove items by category

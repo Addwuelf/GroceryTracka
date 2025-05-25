@@ -8,6 +8,7 @@ enum MeasurementOptions: String, CaseIterable, Identifiable {
     case lb
     case kg
     case g
+    case tbs
     case grams
     case mg
     case ml

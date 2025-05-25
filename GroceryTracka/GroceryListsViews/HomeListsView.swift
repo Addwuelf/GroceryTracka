@@ -24,11 +24,12 @@ struct HomeListsView: View {
     @State private var newListName = ""
     @State private var showingAlert = false
     @State private var showingEditAlert = false
+    @State var titleText = "GroceryTracka"
     
     
     var body: some View {
         VStack(spacing: 0) {
-            Text("GroceryTracka").font(.largeTitle)
+            Text(titleText).font(.largeTitle) .onAppear {titleText = "GroceryTracka" }
             NavigationStack() {
                 ZStack{
                     VStack {
@@ -42,11 +43,14 @@ struct HomeListsView: View {
                                         destination: Contetview(viewModel: viewModel)
                                             .onAppear {
                                                 viewModel.selectedGroceryList = list
+                                                titleText = list.listname ?? "Grocery List"
                                             }
+                                            .onDisappear { titleText = "GroceryTracka"}
                                     ) {
                                         Text(list.listname ?? "default value")
                                             .contentShape(Rectangle())
                                     }
+                                    
                                     
                        
                                     

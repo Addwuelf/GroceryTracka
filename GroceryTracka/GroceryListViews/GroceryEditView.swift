@@ -48,7 +48,7 @@ struct GroceryEditView: View {
                 }
             }
             Picker("Catergory:", selection: $selectedCategory) {
-                var savedCategoryNames = entities.compactMap { $0.infos }.flatMap { $0 }
+                let savedCategoryNames = entities.compactMap { $0.infos }.flatMap { $0 }
                 ForEach(savedCategoryNames, id: \.self) { cat in
                     Text(cat)
                 }

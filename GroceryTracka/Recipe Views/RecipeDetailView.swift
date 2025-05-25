@@ -42,15 +42,22 @@ struct RecipeDetailView: View {
                     }
                 }
             }
-            
-            ScrollView{
+        
+    
             // Collapsible Instructions Section
             DisclosureGroup("Instructions") {
-                Text(instructions)
-                    .padding()
+                ScrollView {
+                    VStack(alignment: .leading) {
+                        Text(instructions)
+                            .padding()
+                            .multilineTextAlignment(.leading) // Ensures proper text wrapping
+                    }
+                }
+                .frame(maxHeight: 250) // Prevents collapsing when scrolling
             }
             .padding()
-        }
+        
+            
 
             Spacer()
         }
