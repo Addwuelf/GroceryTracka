@@ -15,6 +15,8 @@ struct Settings: View {
     @State private var showingDeleteAlert = false
     @State private var selectedCategory: String? // Track which category is tapped
     @State var newCategory: String = ""
+    @State private var isDarkMode = false
+    @State private var useSystemSettings = true
 
     var body: some View {
         VStack {
@@ -61,6 +63,17 @@ struct Settings: View {
                         }
                     }
                 }
+                Section {
+                            // Toggle for System Settings
+                            Toggle("Use System Settings", isOn: $useSystemSettings)
+                        
+                            // Manual Mode Toggle (Greyed out when system settings are enabled)
+                            Toggle("Dark Mode", isOn: $isDarkMode)
+                                .disabled(useSystemSettings) 
+                        }
+                // Uses system mode if enabled
+                        .preferredColorScheme(useSystemSettings ? nil : (isDarkMode ? .dark : .light))
+                        .padding()
             }
         }
     }
