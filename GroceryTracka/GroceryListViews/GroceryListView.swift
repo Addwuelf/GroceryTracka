@@ -11,7 +11,7 @@ struct Contetview: View {
     
     var body: some View {
             NavigationStack {
-                GroceryListView(viewModel: viewModel, itemName: $itemName, logged: $logged, selectedItem: $selectedItem)
+                GroceryListView(viewModel: viewModel, itemName: itemName, logged: $logged, selectedItem: $selectedItem)
             }
         }
 }
@@ -20,7 +20,7 @@ struct Contetview: View {
 struct GroceryListView: View {
     
     @ObservedObject var viewModel: GroceryListViewModel
-    @Binding var itemName: String
+    @State var itemName: String
     @Binding var logged: Bool
     @Binding var selectedItem: GroceryItem?
     @State private var navigateToRecipe = false
@@ -111,7 +111,7 @@ struct GroceryListView: View {
         }
         .background(
                         NavigationLink(
-                            destination: RecipeListView(ingredient: itemName, viewModel: viewModel),
+                            destination: RecipeListView(ingredient: $itemName, viewModel: viewModel),
                             isActive: $navigateToRecipe
                         ) { EmptyView() }
                             .hidden()
@@ -175,7 +175,6 @@ struct GroceryListView: View {
             
         }
 
-        return .white //  Default fallback color
     }
 
 

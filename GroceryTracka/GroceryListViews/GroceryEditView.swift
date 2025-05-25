@@ -110,7 +110,7 @@ struct GroceryEditView: View {
                 try viewContext.save()
             } catch {
                 let nsError = error as NSError
-                fatalError("Unresolved error (nsError) (nsError.userInfo)")
+                fatalError("Unresolved error \(nsError) \(nsError.userInfo)")
             }
         }
     }
@@ -119,10 +119,7 @@ struct GroceryEditView: View {
 
 struct GroceryEditView_Previews: PreviewProvider {
     static var previews: some View {
-        
-        let context = Persistence.preview.container.viewContext
-        let sampleItem = GroceryItem(context: context)
-
+       
    //     return GroceryEditView(passedGroceryItem: sampleItem)
           //  .environment(\.managedObjectContext, context)
     }

@@ -4,7 +4,7 @@ import SwiftUI
 
 struct RecipeListView: View {
     
-    var ingredient: String // Ingredient used for fetching recipes
+   @Binding var ingredient: String // Ingredient used for fetching recipes
     @State private var recipes: [Recipe] = [] // Stores fetched recipes
     @State private var isLoading = true // Indicates data loading state
     @ObservedObject var viewModel: GroceryListViewModel
