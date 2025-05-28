@@ -4,43 +4,44 @@ import Foundation
 
 enum MeasurementOptions: String, CaseIterable, Identifiable {
     case none
-    case oz
-    case lb
-    case kg
-    case g
-    case tbs
-    case grams
-    case mg
-    case ml
-    case milliliters
-    case l
-    case tsp
-    case teaspoons
-    case tbsp
-    case tablespoon
-    case tablespoons
+    case bunch
+    case chopped
+    case clove
+    case cloves
     case cup
     case cups
+    case dash
+    case fillet
+    case florets
+    case gal
+    case g
+    case grams
+    case half
+    case handful
+    case head
+    case kg
+    case l
+    case lb
+    case mg
+    case milliliters
+    case ml
+    case oz
+    case packet
+    case piece
+    case pinch
     case pint
     case quart
-    case gal
-    case dash
-    case pinch
-    case whole
     case slice
     case sliced
     case slices
-    case handful
-    case bunch
     case stick
-    case clove
-    case cloves
-    case half
-    case florets
-    case piece
-    case fillet
-    case packet
-    case head
+    case tbs
+    case tbsp
+    case tablespoon
+    case tablespoons
+    case teaspoons
+    case tsp
+    case whole
     case unknown
 
     var id: Self { self }

@@ -15,13 +15,14 @@ struct Settings: View {
     @State private var showingDeleteAlert = false
     @State private var selectedCategory: String? // Track which category is tapped
     @State var newCategory: String = ""
-    @State private var isDarkMode = false
-    @State private var useSystemSettings = true
+   
+    @AppStorage("useSystemSettings") private var useSystemSettings = true
+    @AppStorage("isDarkMode") private var isDarkMode = false
 
     var body: some View {
         VStack {
             Form {
-                ColorPicker("Background color", selection: $categoryColor)
+                ColorPicker("Category color", selection: $categoryColor)
                     .onAppear {
                         if let savedColor = colors.first {
                             categoryColor = loadCategoryColor(from: savedColor)
@@ -72,7 +73,7 @@ struct Settings: View {
                                 .disabled(useSystemSettings) 
                         }
                 // Uses system mode if enabled
-                        .preferredColorScheme(useSystemSettings ? nil : (isDarkMode ? .dark : .light))
+                .preferredColorScheme(useSystemSettings ? nil : (isDarkMode ? .dark : .light))
                         .padding()
             }
         }

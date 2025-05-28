@@ -15,11 +15,15 @@ struct ContentView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \GroceryItem.itemName, ascending: true)],
         animation: .default)
     private var items: FetchedResults<GroceryItem>
+    
+    @AppStorage("useSystemSettings") private var useSystemSettings = true
+    @AppStorage("isDarkMode") private var isDarkMode = false
 
     var body: some View {
         NavigationView {
            HomeListsView()
         }
+        .preferredColorScheme(useSystemSettings ? nil : (isDarkMode ? .dark : .light))
     }
 
 
