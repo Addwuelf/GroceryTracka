@@ -126,6 +126,12 @@ struct HomeListsView: View {
                             }
                             
                         }
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            NavigationLink(destination: Settings()) {
+                                Image(systemName: "gear")
+                                    .foregroundColor(.blue)
+                            }
+                        }
                     }
                     
                 }
