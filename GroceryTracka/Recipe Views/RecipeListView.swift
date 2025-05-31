@@ -18,7 +18,7 @@ struct RecipeListView: View {
                 ProgressView("Loading recipes...")
             } else {
                 List(recipes, id: \.idMeal) { recipe in
-                    NavigationLink(destination: RecipeDetailView(recipe: recipe, viewModel: viewModel)) {
+                    NavigationLink(destination: RecipeDetailView(recipe: recipe, viewModel: viewModel, ingredientPicked: $ingredient)) {
                         Text(recipe.strMeal)
                     }
                 }

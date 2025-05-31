@@ -11,6 +11,7 @@ struct RecipeDetailView: View {
     var recipe: Recipe
     @Environment(\.managedObjectContext) private var viewContext
     @ObservedObject var viewModel: GroceryListViewModel
+    @Binding var ingredientPicked: String
 
     @State private var ingredients: [(String, String)] = []
     @State private var instructions: String = ""
@@ -31,7 +32,10 @@ struct RecipeDetailView: View {
                 ProgressView()
             }
             .frame(width: 300, height: 300)
-            
+             Spacer()
+            Button("Add all ingredients to list"){
+                addAllItems(ingredientList: ingredients, Ingredient: ingredientPicked)
+            }
             // Ingredients List
             List(ingredients, id: \.0) { ingredient, measure in
                 Button(action: { openGroceryEditView(ingredient: ingredient, measurement: measure) }) {
@@ -120,6 +124,28 @@ struct RecipeDetailView: View {
             guard let ingredient = ingredient, !ingredient.isEmpty,
                   let measure = measure, !measure.isEmpty else { return nil }
             return (ingredient, measure)
+        }
+    }
+    
+    func addAllItems(ingredientList: [(String?, String?)], Ingredient: String) {
+        ingredientList.forEach { ingredient, measure in
+            if ingredient != Ingredient {
+                let newItem = GroceryItem(context: viewContext)
+                
+                let (amount, measurementType) = parseMeasurement(from: measure ?? "Unknown" )
+                newItem.itemName = ingredient
+                newItem.iamount = amount
+                newItem.measurment = measurementType
+                
+                viewModel.selectedGroceryList?.addToItems(newItem)
+                
+                do {
+                    try viewContext.save()
+                } catch {
+                    let nsError = error as NSError
+                    fatalError("Unresolved error \(nsError) \(nsError.userInfo)")
+                }
+            }
         }
     }
 
