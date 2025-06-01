@@ -104,6 +104,6 @@ Breakpoints_v2.xcbkptlist
 !*.xcworkspace/contents.xcworkspacedata
 /*.gcno
 **/xcshareddata/WorkspaceSettings.xcsettings
-GroceryTracka.xcodeproj
+GroceryTracka.xcodeproj/
 GroceryTracka.xcodeproj/project.pbxproj
 # End of https://www.toptal.com/developers/gitignore/api/xcode,swift,cocoapods
