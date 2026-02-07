@@ -6,10 +6,14 @@
 //
 
 import SwiftUI
+import CoreData
+
+
+
 
 @main
 struct GroceryTrackaApp: App {
-    let persistenceController = PersistenceController.shared
+    let persistenceController = Persistence.shared
 
     var body: some Scene {
         WindowGroup {
